@@ -59,6 +59,7 @@ paramgridWithVPC <- function(b0s, b1s, sigmas, phis) {
   params$sig22 <- sapply(params$sigmas, `[`, 3)
   params$sigmas <- NULL
   params <- append_vpc_to_params(params, vpc::vpc.nb, x = c(0,1))
+  rownames(params) <- paste0("Feature", 1:nrow(params))
   return(params)
 }
 
@@ -112,5 +113,39 @@ percomPlot <- function(true_params, ... , palette_name = "Set1") {
   })
 
 }
+
+#' Combine Two Data Frames by Row Names, Handling Missing Rows
+#'
+#' This function merges two data frames by their row names, ensuring that rows missing
+#' from either data frame are handled by filling with `NA` values. The merged result
+#' is then filtered to remove rows that contain `NA`.
+#'
+#' @param df1 A data frame, where row names are used for the merge.
+#' @param df2 A second data frame, also merged by row names.
+#'
+#' @return A data frame that merges `df1` and `df2` by row names, with missing rows handled
+#' and rows containing `NA` removed.
+#' @export
+#'
+#' @examples
+#' df1 <- data.frame(A = c(1, 2, 3), row.names = c("row1", "row2", "row3"))
+#' df2 <- data.frame(B = c(4, 5), row.names = c("row1", "row3"))
+#' result <- robust_cbind(df1, df2)
+#' print(result)
+robust_cbind <- function(df1, df2) {
+  df1$rownames <- rownames(df1)
+  df2$rownames <- rownames(df2)
+  result <- merge(df1, df2, by = "rownames", all = TRUE)
+
+  rownames(result) <- result$rownames
+  result$rownames <- NULL
+
+  #reorder based on original data
+  result <- result[match(rownames(df1), rownames(result)), ]
+  result <- stats::na.omit(result)
+
+  return(result)
+}
+
 
 
