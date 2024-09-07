@@ -21,6 +21,7 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
     set.seed(seed)
   }
 
+  print("Generating Counts")
   datafrmMat <- vpc::parallelbatchGLMMData(params, X, ns, family = true_family,
                                       iter = iter)
 
@@ -28,7 +29,7 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
   X <- datafrmMat[1, ]
   group <- colnames(datafrmMat)
 
-  print("Tranforming Count")
+  print("Tranforming Counts")
   vst_ys <- tryCatch({
     vpc::vstransform(ys, num_cores=4)
   }, error = function(e) {
@@ -36,13 +37,13 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
     return(NULL)
   })
 
-  # print(paste("Fitting", true_family))
-  # fit_true <- vpc::batchGLMMFit(formula, ys, X, group, family = true_family,
-  #                          cov_values = covariates)
-  #
-  # print(paste("Fitting", false_family))
-  # fit_false <- vpc::batchGLMMFit(formula, ys, X, group, family = false_family,
-  #                           cov_values = covariates)
+  print(paste("Fitting", true_family))
+  fit_true <- vpc::batchGLMMFit(formula, ys, X, group, family = true_family,
+                           cov_values = covariates)
+
+  print(paste("Fitting", false_family))
+  fit_false <- vpc::batchGLMMFit(formula, ys, X, group, family = false_family,
+                            cov_values = covariates)
 
   if (!is.null(vst_ys)) {
     print("Fitting VST")
@@ -54,11 +55,10 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
     coefs_vst <- NULL
   }
 
-  # print(paste("Coef", true_family))
-  # coefs_true <- stats::coef(fit_true)
-  # print(paste("Coef", false_family))
-  # coefs_false <- stats::coef(fit_false)
+  print(paste("Coef", true_family))
+  coefs_true <- stats::coef(fit_true)
+  print(paste("Coef", false_family))
+  coefs_false <- stats::coef(fit_false)
 
-  #return(list(coefs_true = coefs_true, coefs_false = coefs_false, coefs_vst = coefs_vst))
-  return(list(coefs_vst = coefs_vst))
+  return(list(coefs_true = coefs_true, coefs_false = coefs_false, coefs_vst = coefs_vst))
 }
