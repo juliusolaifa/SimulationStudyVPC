@@ -1,3 +1,12 @@
 ^SimulationStudyVPC\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+
+.Rhistory
+.RData
+
+.Rcheck/
+
+man/
+
+vignettes/
