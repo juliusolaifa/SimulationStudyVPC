@@ -4,7 +4,7 @@
 \alias{paramgridWithVPC}
 \title{Generate Parameter Grid with VPC Values}
 \usage{
-paramgridWithVPC(b0s, b1s, sigmas, phis, vpc_func, ...)
+paramgridWithVPC(b0s, b1s, sigmas, phis, vpc_func, power = NULL, ...)
 }
 \arguments{
 \item{b0s}{A vector of values for the intercept term \code{b0}.}
@@ -18,7 +18,9 @@ sig12, sig22).}
 
 \item{vpc_func}{The VPC function that computes VPC values.}
 
-\item{...}{Additional arguments (e.g., \code{power}) for the VPC function.}
+\item{power}{A vector of \code{power} values for the model.}
+
+\item{...}{Additional arguments for the VPC function.}
 }
 \value{
 A data frame containing the parameter grid with VPC values appended.

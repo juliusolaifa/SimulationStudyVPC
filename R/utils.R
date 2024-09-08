@@ -48,26 +48,32 @@ append_vpc_to_params <- function(params, vpcfunc, x) {
 #' sig12, sig22).
 #' @param phis A vector of `phi` values for the model.
 #' @param vpc_func The VPC function that computes VPC values.
-#' @param ... Additional arguments (e.g., `power`) for the VPC function.
+#' @param power A vector of `power` values for the model.
+#' @param ... Additional arguments for the VPC function.
 #'
 #' @return A data frame containing the parameter grid with VPC values appended.
 #' @export
 #'
 #' @examples
-paramgridWithVPC <- function(b0s, b1s, sigmas, phis, vpc_func, ...) {
-  args <- list(...)
-  params <- expand.grid(b0=b0s, b1=b1s, sigmas = sigmas, phi=phis, power=args$power)
-  params$sig11 <- sapply(params$sigmas, `[`, 1)
-  params$sig12 <- sapply(params$sigmas, `[`, 2)
-  params$sig22 <- sapply(params$sigmas, `[`, 3)
-  params$sigmas <- NULL
-  if (!is.null(args$power)) {
-    params$power <- args$power  # Add "power" column if provided
+paramgridWithVPC <- function(b0s, b1s, sigmas, phis, vpc_func, power=NULL, ...) {
+  if (!is.null(power)) {
+    params <- expand.grid(b0 = b0s, b1 = b1s, sigmas = sigmas, phi = phis,
+                          power = power)
+  } else {
+    params <- expand.grid(b0 = b0s, b1 = b1s, sigmas = sigmas, phi = phis)
   }
-  params <- append_vpc_to_params(params, vpc_func, x = c(0,1))
+
+  params$sig11 <- as.numeric(sapply(params$sigmas, `[`, 1))
+  params$sig12 <- as.numeric(sapply(params$sigmas, `[`, 2))
+  params$sig22 <- as.numeric(sapply(params$sigmas, `[`, 3))
+  params$sigmas <- NULL
+  params <- append_vpc_to_params(params, vpc_func, x = c(0, 1))
+
   rownames(params) <- paste0("Feature", 1:nrow(params))
+
   return(params)
 }
+
 
 
 #' Generate bias plots for multiple models using various vpc columns
