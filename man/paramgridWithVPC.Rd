@@ -4,7 +4,7 @@
 \alias{paramgridWithVPC}
 \title{Generate Parameter Grid with VPC Values}
 \usage{
-paramgridWithVPC(b0s, b1s, sigmas, phis)
+paramgridWithVPC(b0s, b1s, sigmas, phis, vpc_func, ...)
 }
 \arguments{
 \item{b0s}{A vector of values for the intercept term \code{b0}.}
@@ -15,6 +15,10 @@ paramgridWithVPC(b0s, b1s, sigmas, phis)
 sig12, sig22).}
 
 \item{phis}{A vector of \code{phi} values for the model.}
+
+\item{vpc_func}{The VPC function that computes VPC values.}
+
+\item{...}{Additional arguments (e.g., \code{power}) for the VPC function.}
 }
 \value{
 A data frame containing the parameter grid with VPC values appended.
@@ -23,11 +27,4 @@ A data frame containing the parameter grid with VPC values appended.
 This function generates a parameter grid based on inputs of \code{b0s}, \code{b1s},
 \code{sigmas}, and \code{phis}, and then appends Variance Partition Coefficient (VPC)
 values for each row based on specified values of \code{x}.
-}
-\examples{
-b0s <- c(3, 7)
-b1s <- c(-5, 5)
-sigmas <- list(c(2, 1, 2), c(2, -1, 2), c(2, 0, 4))
-phis <- seq(0.01, 1, 0.05)
-params_with_vpc <- paramgridWithVPC(b0s, b1s, sigmas, phis)
 }

@@ -24,7 +24,12 @@ append_vpc_to_params <- function(params, vpcfunc, x) {
       Sigma <- matrix(as.numeric(c(row["sig11"], row["sig12"],
                         row["sig12"], row["sig22"])), 2, 2)
       phi <- as.numeric(row["phi"])
-      vpcfunc(beta, Sigma, phi, x[i])
+      if ("power" %in% names(row)) {
+        power <- as.numeric(row["power"])
+        vpcfunc(beta, Sigma, phi, x[i], power)
+      } else {
+        vpcfunc(beta, Sigma, phi, x[i])
+      }
     })
 
   }
@@ -42,23 +47,24 @@ append_vpc_to_params <- function(params, vpcfunc, x) {
 #' @param sigmas A list of sigma matrices (with each element containing sig11,
 #' sig12, sig22).
 #' @param phis A vector of `phi` values for the model.
+#' @param vpc_func The VPC function that computes VPC values.
+#' @param ... Additional arguments (e.g., `power`) for the VPC function.
 #'
 #' @return A data frame containing the parameter grid with VPC values appended.
 #' @export
 #'
 #' @examples
-#' b0s <- c(3, 7)
-#' b1s <- c(-5, 5)
-#' sigmas <- list(c(2, 1, 2), c(2, -1, 2), c(2, 0, 4))
-#' phis <- seq(0.01, 1, 0.05)
-#' params_with_vpc <- paramgridWithVPC(b0s, b1s, sigmas, phis)
-paramgridWithVPC <- function(b0s, b1s, sigmas, phis) {
-  params <- expand.grid(b0=b0s, b1=b1s, sigmas = sigmas, phi=phis)
+paramgridWithVPC <- function(b0s, b1s, sigmas, phis, vpc_func, ...) {
+  args <- list(...)
+  params <- expand.grid(b0=b0s, b1=b1s, sigmas = sigmas, phi=phis, power=args$power)
   params$sig11 <- sapply(params$sigmas, `[`, 1)
   params$sig12 <- sapply(params$sigmas, `[`, 2)
   params$sig22 <- sapply(params$sigmas, `[`, 3)
   params$sigmas <- NULL
-  params <- append_vpc_to_params(params, vpc::vpc.nb, x = c(0,1))
+  if (!is.null(args$power)) {
+    params$power <- args$power  # Add "power" column if provided
+  }
+  params <- append_vpc_to_params(params, vpc_func, x = c(0,1))
   rownames(params) <- paste0("Feature", 1:nrow(params))
   return(params)
 }
@@ -108,7 +114,7 @@ percomPlot <- function(true_params, ... , palette_name = "Set1") {
       plot(true, bias, ylim = c(-1, 1),
            xlab = paste("True", vpc), ylab = paste("Bias ", vpc),
            main = paste("Model:", modelname),
-           col = colors[j], pch = 19)
+           col = colors[j])
     }
   })
 
