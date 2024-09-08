@@ -108,22 +108,23 @@ percomPlot <- function(true_params, ... , palette_name = "Set1") {
 
   colors <- RColorBrewer::brewer.pal(max(ncols, 3), palette_name)
 
-  p <- lapply(seq_along(args), function(i) {
+  plots <- lapply(seq_along(args), function(i) {
     df <- args[[i]]
     modelname <- modelnames[i]
-
-    for (j in seq_along(vpcnames)) {
+    lapply(seq_along(vpcnames), function(j) {
       vpc <- vpcnames[j]
       true <- true_params[[vpc]]
       bias <- true_params[[vpc]] - df[[vpc]]
 
+      # Plot the data
       plot(true, bias, ylim = c(-1, 1),
            xlab = paste("True", vpc), ylab = paste("Bias ", vpc),
            main = paste("Model:", modelname),
            col = colors[j])
-    }
+    })
   })
 
+  return(invisible(plots))
 }
 
 #' Combine Two Data Frames by Row Names, Handling Missing Rows

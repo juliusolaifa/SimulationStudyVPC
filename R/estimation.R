@@ -41,7 +41,7 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
   fit_true <- vpc::batchGLMMFit(formula, ys, X, group, family = true_family,
                            cov_values = covariates)
 
-  print(paste("Fitting GLMM to ", false_family, "Data Generated from", true_family))
+  print(paste("Fitting GLMM to", false_family, "Data Generated from", true_family))
   fit_false <- vpc::batchGLMMFit(formula, ys, X, group, family = false_family,
                             cov_values = covariates)
 
@@ -49,7 +49,7 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
     print("Fitting GLMM to VST transformed data")
     fit_vst <- vpc::batchGLMMFit(formula, vst_ys, X, group, family = "ga",
                                  cov_values = covariates)
-    print("Obtaining  coef for VST and its Vpcs")
+    print("Obtaining coef for VST and its Vpcs")
     coefs_vst <- stats::coef(fit_vst)
   } else {
     coefs_vst <- NULL
