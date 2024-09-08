@@ -21,7 +21,7 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
     set.seed(seed)
   }
 
-  print("Generating Counts")
+  print(paste("Generating Counts from ", true_family))
   datafrmMat <- vpc::parallelbatchGLMMData(params, X, ns, family = true_family,
                                       iter = iter)
 
@@ -29,7 +29,7 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
   X <- datafrmMat[1, ]
   group <- colnames(datafrmMat)
 
-  print("Tranforming Counts")
+  print("Tranforming Counts with VST")
   vst_ys <- tryCatch({
     vpc::vstransform(ys, num_cores=4)
   }, error = function(e) {
@@ -37,27 +37,27 @@ compareGLMMFit <- function(params, covariates, X, ns, true_family,
     return(NULL)
   })
 
-  print(paste("Fitting", true_family))
+  print(paste("Fitting GLMM to", true_family, "Data Generated from", true_family))
   fit_true <- vpc::batchGLMMFit(formula, ys, X, group, family = true_family,
                            cov_values = covariates)
 
-  print(paste("Fitting", false_family))
+  print(paste("Fitting GLMM to ", false_family, "Data Generated from", true_family))
   fit_false <- vpc::batchGLMMFit(formula, ys, X, group, family = false_family,
                             cov_values = covariates)
 
   if (!is.null(vst_ys)) {
-    print("Fitting VST")
+    print("Fitting GLMM to VST transformed data")
     fit_vst <- vpc::batchGLMMFit(formula, vst_ys, X, group, family = "ga",
                                  cov_values = covariates)
-    print("coef VST")
+    print("Obtaining  coef for VST and its Vpcs")
     coefs_vst <- stats::coef(fit_vst)
   } else {
     coefs_vst <- NULL
   }
 
-  print(paste("Coef", true_family))
+  print(paste("Obtaining coef for", true_family, "and it's vpcs"))
   coefs_true <- stats::coef(fit_true)
-  print(paste("Coef", false_family))
+  print(paste("Obtaining coef for", false_family, "and it's vpcs"))
   coefs_false <- stats::coef(fit_false)
 
   return(list(coefs_true = coefs_true, coefs_false = coefs_false, coefs_vst = coefs_vst))
