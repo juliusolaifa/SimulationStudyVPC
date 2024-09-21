@@ -32,7 +32,7 @@ transform_counts <- function(ys, fun, num_cores) {
 
 #' @export
 #' @method plot vpcest
-plot.vpcest <- function(x, ...) {
+plot.vpcestmo <- function(x, ...) {
   result_names <- c("negative_binomial", "tweedie", "gaussian")
 
   result_order <- intersect(names(x), result_names)

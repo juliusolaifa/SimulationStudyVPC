@@ -108,6 +108,7 @@ generatecompareGroups <- function(params, ns, family, link, formula,
   result <- compareGroups(datafrmMat, family, num_cores=num_cores)
   result$vpc_mixed <- vpc_mixed
   result$vpc_true <- vpc_true
+  class(result) <- "vpcestgr"
   return(result)
 }
 
@@ -163,9 +164,10 @@ compareModels <- function(dataMat, fit_formula,
     colnames(vpc_vst) <- col_names
     result$gaussian <- vpc_vst
   }
-  class(result) <- "vpcest"
+  class(result) <- "vpcestmo"
   return(result)
 }
+
 
 compareGroups <- function(dataMat, family, num_cores=1) {
   data <- unclass(dataMat)
@@ -183,8 +185,8 @@ compareGroups <- function(dataMat, family, num_cores=1) {
                                 family = family,
                                 num_cores=num_cores)
 
-  vpc0 <- glmmVpc::vpc(model_fit = fit0)
-  vpc1 <- glmmVpc::vpc(model_fit = fit1)
+  vpc0 <- as.numeric(glmmVpc::vpc(model_fit = fit0))
+  vpc1 <- as.numeric(glmmVpc::vpc(model_fit = fit1))
   return(list("vpc0"=vpc0, "vpc1"=vpc1))
 }
 
