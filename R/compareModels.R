@@ -44,7 +44,7 @@ generatecompareEstimation <- function(params, ns, gen_family,
                                                    link=gen_link, iter = iter,
                                                    parallel = TRUE)
 
-  result <- compareEstimation(dataMat=datafrmMat, fit_formula=fit_formula,
+  result <- compareModels(dataMat=datafrmMat, fit_formula=fit_formula,
                                 family1=gen_family, family2=another_family,
                                 fit_transform=fit_transform,
                                 vpc_input_values = vpc_input_values,
@@ -55,7 +55,44 @@ generatecompareEstimation <- function(params, ns, gen_family,
 }
 
 
-compareEstimation <- function(dataMat, fit_formula,
+generatecompareGroups <- function(params, ns, family, link, formula,
+                                      X = NULL, vpc_input_values = NULL,
+                                      num_cores=1,iter = 1, seed = NULL){
+
+  RNGversion("4.3.0")
+  RNGkind(kind = "default", normal.kind = "default", sample.kind = "default")
+
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+
+  vpc_true <- as.data.frame(sapply(vpc_input_values, function(x) {
+    result <- glmmVpc::vpc_from_paramMat(family=family, paramMat=params, x = x)
+    as.numeric(result)
+  }))
+
+  colnames(vpc_true) <- paste0("vpc", vpc_input_values)
+
+  datafrmMat <- glmmVpc::batchGLMMDataUsingMatrix(paramMat=params,
+                                                  ns=ns, X=X,
+                                                  family = family,
+                                                  link=link, iter = iter,
+                                                  parallel = TRUE)
+
+  fits <- glmmVpc::batchGLMMFit(Feature ~ X + (X|cluster), datafrmMat,
+                                num_cores = num_cores)
+
+  vpc_mixed <- as.data.frame(sapply(vpc_input_values, function(x) {
+    result <- glmmVpc::vpc(model_fit = family, x = x)
+    as.numeric(result)
+  }))
+  result <- compareGroups(datafrmMat, family, num_cores=num_cores)
+  result$vpc_mixed <- vpc_mixed
+  result$vpc_true <- vpc_true
+}
+
+
+compareModels <- function(dataMat, fit_formula,
                               family1, family2,
                               fit_transform=TRUE,
                               vpc_input_values,
@@ -108,5 +145,26 @@ compareEstimation <- function(dataMat, fit_formula,
   }
   class(result) <- "vpcest"
   return(result)
+}
+
+compareGroups <- function(dataMat, family, num_cores=1) {
+  data <- unclass(dataMat)
+  dataMat0 <- data[, data["X",]==0][-1,]
+  dataMat1 <- data[, data["X",]==1][-1,]
+  attr(dataMat0, "num_covriate") <- attr(dataMat1, "num_covriate") <- 0
+  attr(dataMat0, "num_feat") <- attr(dataMat1, "num_feat") <- attr(dataMat, "num_feat")
+  class(dataMat0) <- class(dataMat1) <- class(dataMat)
+  fit0 <- glmmVpc::batchGLMMFit(formula= Feature ~ 1 + (1|cluster),
+                        dataMat=dataMat0,
+                        family = family,
+                        num_cores=num_cores)
+  fit1 <- glmmVpc::batchGLMMFit(formula= Feature ~ 1 + (1|cluster),
+                                dataMat=dataMat1,
+                                family = family,
+                                num_cores=num_cores)
+
+  vpc0 <- glmmVpc::vpc(model_fit = fit0)
+  vpc1 <- glmmVpc::vpc(model_fit = fit1)
+  return(list("vpc0"=vpc0, "vpc1"=vpc1))
 }
 
