@@ -108,6 +108,7 @@ generatecompareGroups <- function(params, ns, family, link, formula,
   result <- compareGroups(datafrmMat, family, num_cores=num_cores)
   result$vpc_mixed <- vpc_mixed
   result$vpc_true <- vpc_true
+  return(result)
 }
 
 
