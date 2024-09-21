@@ -72,7 +72,7 @@ compareEstimation <- function(dataMat, fit_formula,
                                     num_cores=num_cores)
   if(save_family2) {
     coeff <- coef(fit_family2)
-    write.csv(coeff, file = paste0(family2,".csv"))
+    write.csv(coeff, file = paste0(family2,".csv"), row.names=F)
   }
 
   vpc_family2 <- as.data.frame(sapply(vpc_input_values, function(x) {
