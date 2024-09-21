@@ -98,7 +98,7 @@ generatecompareGroups <- function(params, ns, family, link, formula,
                                                   parallel = TRUE)
 
   fits <- glmmVpc::batchGLMMFit(formula = Feature ~ X + (X|cluster),
-                                dataMat = datafrmMat, family = family
+                                dataMat = datafrmMat, family = family,
                                 num_cores = num_cores)
 
   vpc_mixed <- as.data.frame(sapply(vpc_input_values, function(x) {
