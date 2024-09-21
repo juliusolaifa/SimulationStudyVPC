@@ -4,7 +4,13 @@ Version: 1.0.0
 Authors@R: 
     person("Julius", "Olaifa", , "julius.olaifa@okstate.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3864-099X"))
-Description: What the package does (one paragraph).
+Description: This package provides tools for performing simulation studies and 
+    variance partition coefficient (VPC) estimation for generalized linear mixed 
+    models (GLMMs). It includes functions to compare VPC estimates across different 
+    model families, such as negative binomial, tweedie, and gaussian, and supports 
+    customizable simulation setups for evaluating model performance and bias in 
+    complex data structures.
+Depends: R (>= 4.3.0)  # <-- Enforces R version 4.3.0 or higher
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
