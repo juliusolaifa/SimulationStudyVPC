@@ -10,7 +10,7 @@ Description: This package provides tools for performing simulation studies and
     model families, such as negative binomial, tweedie, and gaussian, and supports 
     customizable simulation setups for evaluating model performance and bias in 
     complex data structures.
-Depends: R (>= 4.3.0)  # <-- Enforces R version 4.3.0 or higher
+Depends: R (>= 4.3.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
