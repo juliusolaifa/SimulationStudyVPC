@@ -31,7 +31,7 @@ transform_counts <- function(ys, fun, num_cores) {
 }
 
 #' @export
-#' @method plot vpcest
+#' @method plot vpcestmo
 plot.vpcestmo <- function(x, ...) {
   result_names <- c("negative_binomial", "tweedie", "gaussian")
 
@@ -61,6 +61,38 @@ plot.vpcestmo <- function(x, ...) {
                   side = 3, line = -1, outer = TRUE, cex = 1)
 
   graphics::par(mfrow = c(1, 1))
+}
+
+
+#' @export
+#' @method plot vpcestgr
+plot.vpcestgr <- function(x, ...) {
+  graphics::par(mfrow=c(2,2))
+
+  plot(x[["vpc0"]], x[["vp1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
+       main = "Independent Fitting", ylim=c(0,1), xlim=c(0,1))
+  graphics::abline(0, 1)
+
+  plot(x[["vpc_true"]][["vpc0"]], x[["vpc_true"]][["vpc1"]],
+       col = "blue", xlab = "Vpc0", ylab = "Vpc1",
+       main = "True", ylim=c(0,1), xlim=c(0,1))
+  graphics::abline(0, 1)
+
+  plot(x[["vpc_mixed"]][["vpc0"]], x[["vpc_mixed"]][["vpc1"]],
+       col = "green", xlab = "Vpc0", ylab = "Vpc1",
+       main = "True", ylim=c(0,1), xlim=c(0,1))
+  graphics::abline(0, 1)
+
+  plot(x[["vpc0"]], x[["vp1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
+       main = "Comparison", ylim=c(0,1), xlim=c(0,1))
+  graphics::points(x[["vpc_true"]][["vpc0"]], x[["vpc_true"]][["vpc1"]], col = "blue")
+  graphics::abline(0, 1)
+  graphics::points(x[["vpc_mixed"]][["V1"]], x[["vpc_mixed"]][["V2"]], col = "green")
+
+  graphics::legend("bottomright", legend = c("Indep", "True", "Mixed"),
+         col = c("red", "blue", "green"), lty=1, bty = "n")
+
+  graphics::par(mfrow=c(1,1))
 }
 
 
