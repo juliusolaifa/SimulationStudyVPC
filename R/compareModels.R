@@ -55,6 +55,24 @@ generatecompareEstimation <- function(params, ns, gen_family,
 }
 
 
+#' Compare GLMM Fit for Groups when handled independently
+#'
+#' @param params A matrix or data frame of parameter values for GLMM data
+#' generation.
+#' @param ns Number of samples or observations per batch.
+#' @param family The family distribution used for data generation.
+#' @param link A link function for generating the data
+#' @param formula The model formula for GLMM fitting.
+#' @param X A design matrix for the GLMM.
+#' @param vpc_input_values A vector for which vpc is calculated
+#' @param num_cores Number of cores to fit GLMM with
+#' @param iter Number of iterations for data generation (default is 1).
+#' @param seed An optional seed for reproducibility.
+#'
+#' @return A list containing the coefficients of the true vpcs, vpcs with
+#' single mixed effect model, and vpcs for independent mixed models.
+#'
+#' @export
 generatecompareGroups <- function(params, ns, family, link, formula,
                                       X = NULL, vpc_input_values = NULL,
                                       num_cores=1,iter = 1, seed = NULL){
