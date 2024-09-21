@@ -23,6 +23,10 @@ generatecompareEstimation <- function(params, ns, gen_family,
                               another_family, gen_link, fit_formula,
                               X = NULL, vpc_input_values = NULL,num_cores=1,
                               fit_transform=TRUE,iter = 1, seed = NULL){
+
+  RNGversion("4.3.0")
+  RNGkind(kind = "default", normal.kind = "default", sample.kind = "default")
+
   if (!is.null(seed)) {
     set.seed(seed)
   }
@@ -71,8 +75,8 @@ compareEstimation <- function(dataMat, fit_formula,
                                     family = family2,
                                     num_cores=num_cores)
   if(save_family2) {
-    coeff <- coef(fit_family2)
-    write.csv(coeff, file = paste0(family2,".csv"), row.names=F)
+    coeff <- stats::coef(fit_family2)
+    utils::write.csv(coeff, file = paste0(family2,".csv"), row.names=F)
   }
 
   vpc_family2 <- as.data.frame(sapply(vpc_input_values, function(x) {
