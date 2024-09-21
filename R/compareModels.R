@@ -102,7 +102,7 @@ generatecompareGroups <- function(params, ns, family, link, formula,
                                 num_cores = num_cores)
 
   vpc_mixed <- as.data.frame(sapply(vpc_input_values, function(x) {
-    result <- glmmVpc::vpc(model_fit = family, x = x)
+    result <- glmmVpc::vpc(model_fit = fits, x = x)
     as.numeric(result)
   }))
   result <- compareGroups(datafrmMat, family, num_cores=num_cores)
