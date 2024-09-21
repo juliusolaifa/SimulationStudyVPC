@@ -55,7 +55,7 @@ compareEstimation <- function(dataMat, fit_formula,
                               family1, family2,
                               fit_transform=TRUE,
                               vpc_input_values,
-                              num_cores=1) {
+                              num_cores=1, save_family2 = TRUE) {
 
   fit_family1 <- glmmVpc::batchGLMMFit(formula=fit_formula,
                                     dataMat=dataMat,
@@ -70,6 +70,11 @@ compareEstimation <- function(dataMat, fit_formula,
                                     dataMat=dataMat,
                                     family = family2,
                                     num_cores=num_cores)
+  if(save_family2) {
+    coeff <- glmmVpc::coef(fit_family2)
+    write.csv(coeff, file = paste0(family2,".csv"))
+  }
+
   vpc_family2 <- as.data.frame(sapply(vpc_input_values, function(x) {
     result <- glmmVpc::vpc(model_fit = fit_family2, x = x)
     as.numeric(result)
