@@ -71,7 +71,7 @@ compareEstimation <- function(dataMat, fit_formula,
                                     family = family2,
                                     num_cores=num_cores)
   if(save_family2) {
-    coeff <- glmmVpc::coef(fit_family2)
+    coeff <- coef(fit_family2)
     write.csv(coeff, file = paste0(family2,".csv"))
   }
 
