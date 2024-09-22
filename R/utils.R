@@ -69,7 +69,7 @@ plot.vpcestmo <- function(x, ...) {
 plot.vpcestgr <- function(x, ...) {
   graphics::par(mfrow=c(2,2))
 
-  plot(x[["vpc0"]], x[["vp1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
+  plot(x[["vpc0"]], x[["vpc1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
        main = "Independent Fitting", ylim=c(0,1), xlim=c(0,1))
   graphics::abline(0, 1)
 
@@ -80,10 +80,10 @@ plot.vpcestgr <- function(x, ...) {
 
   plot(x[["vpc_mixed"]][["vpc0"]], x[["vpc_mixed"]][["vpc1"]],
        col = "green", xlab = "Vpc0", ylab = "Vpc1",
-       main = "True", ylim=c(0,1), xlim=c(0,1))
+       main = "Combined", ylim=c(0,1), xlim=c(0,1))
   graphics::abline(0, 1)
 
-  plot(x[["vpc0"]], x[["vp1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
+  plot(x[["vpc0"]], x[["vpc1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
        main = "Comparison", ylim=c(0,1), xlim=c(0,1))
   graphics::points(x[["vpc_true"]][["vpc0"]], x[["vpc_true"]][["vpc1"]], col = "blue")
   graphics::abline(0, 1)
@@ -95,6 +95,9 @@ plot.vpcestgr <- function(x, ...) {
   graphics::par(mfrow=c(1,1))
 }
 
+
+#' @export
+#' @method boxplot vpcestpt
 boxplot.vpcestpt <- function(x, ...) {
   boxplot(do.call(cbind, x[["vpcest"]][as.character(1:9)]),
           names = rep(c("vpc0", "vpc1"), 9),
