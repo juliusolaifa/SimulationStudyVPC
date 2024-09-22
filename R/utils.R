@@ -64,35 +64,47 @@ plot.vpcestmo <- function(x, ...) {
 }
 
 
+' Plot Method for vpcestgr Objects
+#'
+#' This function creates a 2x2 grid of plots for visualizing various aspects of vpcestgr objects.
+#'
+#' @param x An object of class vpcestgr
+#' @param ... Additional arguments passed to plot
+#'
+#' @return No return value, called for side effects (plotting)
+#'
 #' @export
 #' @method plot vpcestgr
 plot.vpcestgr <- function(x, ...) {
-  graphics::par(mfrow=c(2,2))
+  # Set up the plotting area
+  old_par <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(old_par))
+  graphics::par(mfrow = c(2, 2), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 4))
 
-  plot(x[["vpc0"]], x[["vpc1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
-       main = "Independent Fitting", ylim=c(0,1), xlim=c(0,1))
-  graphics::abline(0, 1)
+  # Common plotting function
+  plot_vpc <- function(x0, x1, col, main) {
+    plot(x0, x1, col = col, xlab = "Vpc0", ylab = "Vpc1",
+         main = main, ylim = c(0, 1), xlim = c(0, 1), ...)
+    graphics::abline(0, 1)
+  }
 
-  plot(x[["vpc_true"]][["vpc0"]], x[["vpc_true"]][["vpc1"]],
-       col = "blue", xlab = "Vpc0", ylab = "Vpc1",
-       main = "True", ylim=c(0,1), xlim=c(0,1))
-  graphics::abline(0, 1)
+  # Individual plots
+  plot_vpc(x[["vpc0"]], x[["vpc1"]], "red", "Independent Fitting")
+  plot_vpc(x[["vpc_true"]][["vpc0"]], x[["vpc_true"]][["vpc1"]], "blue", "True")
+  plot_vpc(x[["vpc_mixed"]][["vpc0"]], x[["vpc_mixed"]][["vpc1"]], "green", "Combined")
 
-  plot(x[["vpc_mixed"]][["vpc0"]], x[["vpc_mixed"]][["vpc1"]],
-       col = "green", xlab = "Vpc0", ylab = "Vpc1",
-       main = "Combined", ylim=c(0,1), xlim=c(0,1))
-  graphics::abline(0, 1)
-
-  plot(x[["vpc0"]], x[["vpc1"]], col="red", xlab = "Vpc0", ylab = "Vpc1",
-       main = "Comparison", ylim=c(0,1), xlim=c(0,1))
+  # Comparison plot
+  plot_vpc(x[["vpc0"]], x[["vpc1"]], "red", "Comparison")
   graphics::points(x[["vpc_true"]][["vpc0"]], x[["vpc_true"]][["vpc1"]], col = "blue")
-  graphics::abline(0, 1)
   graphics::points(x[["vpc_mixed"]][["vpc0"]], x[["vpc_mixed"]][["vpc1"]], col = "green")
 
-  graphics::legend("bottomright", legend = c("Indep", "True", "Mixed"),
-         col = c("red", "blue", "green"), lty=1, bty = "n")
+  graphics::mtext("VPC Estimation Comparison", outer = TRUE, cex = 1.5)
 
-  graphics::par(mfrow=c(1,1))
+  graphics::par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+  plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
+  graphics::legend("right", legend = c("Independent", "True", "Combined"),
+                   col = c("red", "blue", "green"), pch = 1, bty = "n",
+                   cex = 1, xpd = TRUE, inset = c(-0.1, 0))
 }
 
 
