@@ -248,12 +248,6 @@ comparePoints <- function(params, ns, X=X, family, link, formula,
                                                   parallel = TRUE)
   colnames(vpc_true) <- paste0("vpc", vpc_input_values)
 
-  datafrmMat <- glmmVpc::batchGLMMDataUsingMatrix(paramMat=params,
-                                                  ns=ns, X=X,
-                                                  family = family,
-                                                  link=link, iter = iter,
-                                                  parallel = TRUE)
-
   fits <- glmmVpc::batchGLMMFit(formula = formula,
                                 dataMat = datafrmMat, family = family,
                                 num_cores = num_cores)
