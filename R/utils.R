@@ -110,6 +110,7 @@ plot.vpcestgr <- function(x, ...) {
 
 #' @export
 #' @method boxplot vpcestpt
+#' @importFrom graphics boxplot
 boxplot.vpcestpt <- function(x, ...) {
   boxplot(do.call(cbind, x[["vpcest"]][as.character(1:9)]),
           names = rep(c("vpc0", "vpc1"), 9),
@@ -119,8 +120,8 @@ boxplot.vpcestpt <- function(x, ...) {
           las=2)
 
   for (i in 1:9) {
-    points(2*i - 1, x[["true"]]$vpc0[i], pch = 19, cex = 1.2)
-    points(2*i, x[["true"]]$vpc1[i], pch = 19, cex = 1.2)
+    graphics::points(2*i - 1, x[["true"]]$vpc0[i], pch = 19, cex = 1.2)
+    graphics::points(2*i, x[["true"]]$vpc1[i], pch = 19, cex = 1.2)
   }
 
 }
