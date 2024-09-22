@@ -105,6 +105,8 @@ generatecompareGroups <- function(params, ns, family, link, formula,
     result <- glmmVpc::vpc(model_fit = fits, x = x)
     as.numeric(result)
   }))
+  colnames(vpc_mixed) <- paste0("vpc", vpc_input_values)
+
   result <- compareGroups(datafrmMat, family, num_cores=num_cores)
   result$vpc_mixed <- vpc_mixed
   result$vpc_true <- vpc_true
@@ -189,4 +191,84 @@ compareGroups <- function(dataMat, family, num_cores=1) {
   vpc1 <- as.numeric(glmmVpc::vpc(model_fit = fit1))
   return(list("vpc0"=vpc0, "vpc1"=vpc1))
 }
+
+
+#' Compare Estimated VPC with True VPC
+#'
+#' This function compares the true Variance Partition Coefficient (VPC) values
+#' calculated from parameter matrices with the estimated VPC values from GLMM
+#' model fits.
+#'
+#' @param params A parameter matrix used for generating the data.
+#'   Columns may include parameters like \code{b0}, \code{b1}, \code{sig11},
+#'   \code{sig12}, \code{sig22}.
+#' @param ns A vector specifying the sample sizes for each group in the data
+#' generation.
+#' @param X The covariate matrix for fixed effects. Default is \code{X = X}.
+#' @param family A character string specifying the family for the model
+#' (e.g., "negative_binomial", "tweedie").
+#' @param link The link function to be used in the GLMM model.
+#' @param formula The formula for fitting the GLMM model (e.g.,
+#' \code{Feature ~ X + (X|cluster)}).
+#' @param vpc_input_values A vector of input values at which to compute the VPC.
+#' Default is \code{NULL}.
+#' @param iter Number of iterations for generating data. Default is 1.
+#' @param seed An optional random seed for reproducibility. Default is
+#' \code{NULL}.
+#' @param num_cores The number of CPU cores to use for parallel processing.
+#' Default is 1.
+#'
+#' @return A list with two elements: \code{true} and \code{vpcest}.
+#'   - \code{true}: The true VPC values based on the input parameters.
+#'   - \code{vpcest}: The estimated VPC values from the fitted GLMM models.
+#'   The function also stores the number of iterations as an attribute called
+#'   \code{num_iter}.
+#'
+#' @export
+comparePoints <- function(params, ns, X=X, family, link, formula,
+                          vpc_input_values=NULL, iter=1, seed = NULL,
+                          num_cores=1) {
+
+  RNGversion("4.3.0")
+  RNGkind(kind = "default", normal.kind = "default", sample.kind = "default")
+
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+
+  vpc_true <- as.data.frame(sapply(vpc_input_values, function(x) {
+    result <- glmmVpc::vpc_from_paramMat(family=family, paramMat=params, x = x)
+    as.numeric(result)
+  }))
+
+  datafrmMat <- glmmVpc::batchGLMMDataUsingMatrix(paramMat=params,
+                                                  ns=ns, X=X,
+                                                  family = family,
+                                                  link=link, iter = iter,
+                                                  parallel = TRUE)
+  colnames(vpc_true) <- paste0("vpc", vpc_input_values)
+
+  datafrmMat <- glmmVpc::batchGLMMDataUsingMatrix(paramMat=params,
+                                                  ns=ns, X=X,
+                                                  family = family,
+                                                  link=link, iter = iter,
+                                                  parallel = TRUE)
+
+  fits <- glmmVpc::batchGLMMFit(formula = formula,
+                                dataMat = datafrmMat, family = family,
+                                num_cores = num_cores)
+
+  vpcest <- as.data.frame(sapply(vpc_input_values, function(x) {
+    result <- glmmVpc::vpc(model_fit = fits, x = x)
+    as.numeric(result)
+  }))
+
+  colnames(vpcest) <- paste0("vpc", vpc_input_values)
+
+  split_vpcest <- split(vpcest, rep(1:nrow(params), each = iter))
+  result <- list("true"=vpc_true, "vpcest" = split_vpcest)
+  class(result) <- "vpcestpt"
+  return(result)
+}
+
 

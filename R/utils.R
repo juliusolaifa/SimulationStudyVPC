@@ -87,12 +87,27 @@ plot.vpcestgr <- function(x, ...) {
        main = "Comparison", ylim=c(0,1), xlim=c(0,1))
   graphics::points(x[["vpc_true"]][["vpc0"]], x[["vpc_true"]][["vpc1"]], col = "blue")
   graphics::abline(0, 1)
-  graphics::points(x[["vpc_mixed"]][["V1"]], x[["vpc_mixed"]][["V2"]], col = "green")
+  graphics::points(x[["vpc_mixed"]][["vpc0"]], x[["vpc_mixed"]][["vpc1"]], col = "green")
 
   graphics::legend("bottomright", legend = c("Indep", "True", "Mixed"),
          col = c("red", "blue", "green"), lty=1, bty = "n")
 
   graphics::par(mfrow=c(1,1))
+}
+
+boxplot.vpcestpt <- function(x, ...) {
+  boxplot(do.call(cbind, x[["vpcest"]][as.character(1:9)]),
+          names = rep(c("vpc0", "vpc1"), 9),
+          main = "Boxplots of VPCs",
+          ylab = "VPC Values",
+          col = rep(c("lightblue", "pink"), 9),
+          las=2)
+
+  for (i in 1:9) {
+    points(2*i - 1, x[["true"]]$vpc0[i], pch = 19, cex = 1.2)
+    points(2*i, x[["true"]]$vpc1[i], pch = 19, cex = 1.2)
+  }
+
 }
 
 
