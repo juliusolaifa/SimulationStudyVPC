@@ -52,9 +52,11 @@ plot.vpcestmo <- function(x, ...) {
     plot(true_vpc0, result_vpc0 - true_vpc0, ylim = c(-1, 1), xlim=c(0,1),
          pch = 16, col = "blue", ylab = "Bias", xlab = "True Vpc0",
          main = result_name)
+    graphics::abline(h=0)
     plot(true_vpc1, result_vpc1 - true_vpc1, ylim = c(-1, 1),  xlim=c(0,1),
          pch = 16, col = "red", ylab = "Bias", xlab = "True Vpc1",
          main = result_name)
+    graphics::abline(h=0)
   }
 
   graphics::mtext(paste("Data Generation Family:", result_order[1]),
