@@ -103,7 +103,8 @@ generatecompareGroups <- function(params, ns, family, link, formula,
 
   vpc_mixed <- as.data.frame(sapply(vpc_input_values, function(x) {
     result <- glmmVpc::vpc(model_fit = fits, x = x)
-    as.numeric(result)
+    result <- sapply(result, function(res) res$vpc)
+    result
   }))
   colnames(vpc_mixed) <- paste0("vpc", vpc_input_values)
 
@@ -125,15 +126,19 @@ compareModels <- function(dataMat, fit_formula,
                                     dataMat=dataMat,
                                     family = family1,
                                     num_cores=num_cores)
+
   vpc_family1 <- as.data.frame(sapply(vpc_input_values, function(x) {
     result <- glmmVpc::vpc(model_fit = fit_family1, x = x)
-    as.numeric(result)
+    result <- sapply(result, function(res) res$vpc)
+    result
   }))
+
 
   fit_family2 <- glmmVpc::batchGLMMFit(formula=fit_formula,
                                     dataMat=dataMat,
                                     family = family2,
                                     num_cores=num_cores)
+
   if(save_family2) {
     coeff <- stats::coef(fit_family2)
     utils::write.csv(coeff, file = paste0(family2,".csv"), row.names=F)
@@ -141,7 +146,8 @@ compareModels <- function(dataMat, fit_formula,
 
   vpc_family2 <- as.data.frame(sapply(vpc_input_values, function(x) {
     result <- glmmVpc::vpc(model_fit = fit_family2, x = x)
-    as.numeric(result)
+    result <- sapply(result, function(res) res$vpc)
+    result
   }))
   col_names <- paste0("vpc", vpc_input_values)
   colnames(vpc_family1) <- colnames(vpc_family2)  <- col_names
@@ -161,7 +167,8 @@ compareModels <- function(dataMat, fit_formula,
                                        num_cores=num_cores)
     vpc_vst <- as.data.frame(sapply(vpc_input_values, function(x) {
       result <- glmmVpc::vpc(model_fit = fit_vst, x = x)
-      as.numeric(result)
+      result <- sapply(result, function(res) res$vpc)
+      result
     }))
     colnames(vpc_vst) <- col_names
     result$gaussian <- vpc_vst
