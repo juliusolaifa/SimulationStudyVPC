@@ -261,7 +261,8 @@ comparePoints <- function(params, ns, X=X, family, link, formula,
 
   vpcest <- as.data.frame(sapply(vpc_input_values, function(x) {
     result <- glmmVpc::vpc(model_fit = fits, x = x)
-    as.numeric(result)
+    result <- sapply(result, function(res) res$vpc)
+    result
   }))
 
   colnames(vpcest) <- paste0("vpc", vpc_input_values)
