@@ -84,7 +84,6 @@ custom_boxplot <- function(x, ..., range = 1.5, width = NULL, varwidth = FALSE,
   if (plot) {
     if (is.null(pars$boxfill) && is.null(args$boxfill))
       pars$boxfill <- col
-
     do.call(graphics::bxp, c(list(z, notch = notch, width = width,
                         varwidth = varwidth, log = log, border = border,
                         pars = pars, outline = outline, horizontal = horizontal,
@@ -105,16 +104,31 @@ custom_boxplot <- function(x, ..., range = 1.5, width = NULL, varwidth = FALSE,
 #'
 #' @export
 customboxplot <- function(x, ...) {
-  custom_boxplot(do.call(cbind, x[["vpcest"]][as.character(1:9)]),
-          names = rep(c("vpc0", "vpc1"), 9),
-          main = "Boxplots of VPCs",
-          ylab = "VPC Values",
-          col = rep(c("lightblue", "pink"), 9),
-          las=2)
+  # Set up the layout to accommodate the plot and legend
+  # Adjust bottom margin to make room for the legend
+  #par(mar = c(6, 4, 4, 2) + 0.1)  # Default margins plus small adjustment
 
-  for (i in 1:9) {
+  num <- nrow(x[["true"]])
+  args <- list(...)
+  title <- ifelse(is.null(args$title), "Boxplots of VPCs", args$title)
+  custom_boxplot(do.call(cbind, x[["vpcest"]][as.character(1:num)]),
+                 cex.axis = 0.8, #names = args$names
+                 main = title,
+                 ylab = "VPC Values",
+                 col = rep(c("lightblue", "pink"), num))
+
+  # Add legend horizontally at the bottom
+  graphics::legend("bottomright",
+         legend = c("VPC0","VPC1"),
+         col = c("lightblue", "pink"),
+         pch = 15,
+         horiz = F,#TRUE,  # Make legend horizontal
+         xpd = F,#TRUE,    # Allow plotting outside the plot region
+         #inset = c(0, -0.15) # Adjust position below plot
+         )
+
+  for (i in 1:num) {
     graphics::points(2*i - 1, x[["true"]]$vpc0[i], pch = 19, cex = 1.2)
     graphics::points(2*i, x[["true"]]$vpc1[i], pch = 19, cex = 1.2)
   }
-
 }

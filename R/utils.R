@@ -114,6 +114,7 @@ plot.vpcestgr <- function(x, ...) {
 #' @method boxplot vpcestpt
 #' @importFrom graphics boxplot
 boxplot.vpcestpt <- function(x, ...) {
+  graphics::par(mar=graphics::par("mar") - c(0.1, 0, 0, 0))
   boxplot(do.call(cbind, x[["vpcest"]][as.character(1:9)]),
           names = rep(c("vpc0", "vpc1"), 9),
           main = "Boxplots of VPCs",
@@ -125,6 +126,16 @@ boxplot.vpcestpt <- function(x, ...) {
     graphics::points(2*i - 1, x[["true"]]$vpc0[i], pch = 19, cex = 1.2)
     graphics::points(2*i, x[["true"]]$vpc1[i], pch = 19, cex = 1.2)
   }
+
+  y_position <- graphics::par("usr")[3]- 0.5  # Adjust this value to control the distance from the x-axis
+  x_labels <- c("Group 1", "Group 2", "Group 3", "Group 4", "Group 5", "Group 6", "Group 7", "Group 8", "Group 9")
+  for (i in 1:9) {
+    # Position the label below the x-axis
+    graphics::text(x = 2 * i - 1, y = y_position, labels = x_labels[i], pos = 1, cex = 0.8) # vpc0 label
+    graphics::text(x = 2 * i, y = y_position, labels = x_labels[i], pos = 1, cex = 0.8) # vpc1 label
+  }
+
+  graphics::par(mar=graphics::par("mar") - c(0.1, 0, 0, 0))
 
 }
 
