@@ -267,7 +267,11 @@ comparePoints <- function(params, ns, X=X, family, link, formula,
 
   colnames(vpcest) <- paste0("vpc", vpc_input_values)
 
-  split_vpcest <- split(vpcest, rep(1:nrow(params), each = iter))
+  grouping <- as.integer(sub("Feature", "",sapply(fits,
+                      function(fit) colnames(fit$modObj$frame)[1])))
+  grouping_index <- factor((grouping - 1) %/% iter + 1)
+  split_vpcest <- split(vpcest, grouping_index)
+  # split_vpcest <- split(vpcest, rep(1:nrow(params), each = iter))
   result <- list("true"=vpc_true, "vpcest" = split_vpcest)
   class(result) <- "vpcestpt"
   return(result)
