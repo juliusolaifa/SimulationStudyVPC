@@ -112,7 +112,7 @@ customboxplot <- function(x, ...) {
   args <- list(...)
   title <- ifelse(is.null(args$title), "Boxplots of VPCs", args$title)
   custom_boxplot(do.call(cbind, x[["vpcest"]][as.character(1:num)]),
-                 cex.axis = 0.8, #names = args$names
+                 cex.axis = 0.8, names = args$names,
                  main = title,
                  ylab = "VPC Values",
                  col = rep(c("lightblue", "pink"), num))
