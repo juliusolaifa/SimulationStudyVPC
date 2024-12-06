@@ -108,6 +108,15 @@ customboxplot <- function(x, ...) {
   # Adjust bottom margin to make room for the legend
   #par(mar = c(6, 4, 4, 2) + 0.1)  # Default margins plus small adjustment
 
+  max_rows <- max(sapply(x[["vpcest"]], nrow))
+  x[["vpcest"]] <- lapply(x[["vpcest"]], function(df) {
+    if (nrow(df) < max_rows) {
+      rbind(df, matrix(NA, nrow = max_rows - nrow(df), ncol = ncol(df)))
+    } else {
+      df
+    }
+  })
+
   num <- nrow(x[["true"]])
   args <- list(...)
   title <- ifelse(is.null(args$title), "Boxplots of VPCs", args$title)
